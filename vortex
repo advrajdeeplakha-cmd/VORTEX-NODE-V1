@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -u
+
+BLUE='\033[1;34m'; CYAN='\033[1;36m'; GREEN='\033[1;32m'
+YELLOW='\033[1;33m'; RED='\033[1;31m'; RESET='\033[0m'
+
+BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+banner() {
+clear
+printf "${BLUE}"
+cat <<'EOF'
+██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗  ██╗
+██║   ██║██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝╚██╗██╔╝
+██║   ██║██║   ██║██████╔╝   ██║   █████╗   ╚███╔╝
+╚██╗ ██╔╝██║   ██║██╔══██╗   ██║   ██╔══╝   ██╔██╗
+ ╚████╔╝ ╚██████╔╝██║  ██║   ██║   ███████╗██╔╝ ██╗
+  ╚═══╝   ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+EOF
+printf "${RESET}"
+printf "${CYAN}                 V O R T E X   N O D E${RESET}\n"
+printf "${CYAN}              ALL-IN-ONE INSTALLER${RESET}\n\n"
+}
+
+loading() {
+  local frames=("V" "VO" "VOR" "VORT" "VORTE" "VORTEX" "VORTEX N" "VORTEX NO" "VORTEX NOD" "VORTEX NODE")
+  for f in "${frames[@]}"; do
+    clear; banner
+    printf "${CYAN}                         %s${RESET}\n" "$f"
+    printf "${YELLOW}                     LOADING...${RESET}\n"
+    sleep 0.5
+  done
+  sleep 1
+}
+
+pause_menu() { echo; read -r -p "Press ENTER to return..." _; }
+
+run_module() {
+  local title="$1" file="$2"
+  banner
+  echo -e "${CYAN}${title}${RESET}\n"
+  if [[ -f "$file" ]]; then
+    bash "$file"
+  else
+    echo -e "${RED}Module missing: $file${RESET}"
+  fi
+  pause_menu
+}
+
+main_menu() {
+while true; do
+  banner
+  cat <<'EOF'
+╔══════════════════════════════════════════════════╗
+║              VORTEX NODE INSTALLER               ║
+╠══════════════════════════════════════════════════╣
+║ [1] Pterodactyl Panel Installer                  ║
+║ [2] Wings Installer                               ║
+║ [3] HVM Installer                                 ║
+║ [4] Blueprint Installer                           ║
+║ [5] Blueprint 500 Error Fixer                     ║
+║ [6] Docker Installer                              ║
+║ [7] Cloudflare Tunnel                             ║
+║ [8] Node / Panel Repair                           ║
+║ [9] System Cleanup                                ║
+║ [0] Exit                                          ║
+╚══════════════════════════════════════════════════╝
+EOF
+  echo
+  read -r -p "VORTEX-NODE > " choice
+  case "$choice" in
+    1) run_module "PTERODACTYL PANEL INSTALLER" "$BASE/modules/pterodactyl.sh" ;;
+    2) run_module "WINGS INSTALLER" "$BASE/modules/wings.sh" ;;
+    3) run_module "HVM INSTALLER" "$BASE/modules/hvm.sh" ;;
+    4) run_module "BLUEPRINT INSTALLER" "$BASE/modules/blueprint.sh" ;;
+    5) run_module "BLUEPRINT 500 ERROR FIXER" "$BASE/modules/blueprint-fix.sh" ;;
+    6) run_module "DOCKER INSTALLER" "$BASE/modules/docker.sh" ;;
+    7) run_module "CLOUDFLARE TUNNEL" "$BASE/modules/cloudflare.sh" ;;
+    8) run_module "NODE / PANEL REPAIR" "$BASE/modules/repair.sh" ;;
+    9) run_module "SYSTEM CLEANUP" "$BASE/modules/cleanup.sh" ;;
+    0) clear; echo "VORTEX NODE closed."; exit 0 ;;
+    *) echo -e "${RED}Invalid option.${RESET}"; sleep 1 ;;
+  esac
+done
+}
+
+loading
+main_menu
